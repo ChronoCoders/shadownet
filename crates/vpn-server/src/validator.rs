@@ -1,4 +1,4 @@
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{bail, Context, Result};
 use std::net::IpAddr;
 use std::time::{SystemTime, UNIX_EPOCH};
 use zkdip_crypto::{jwt::JwtSigner, types::DatClaims};
@@ -55,14 +55,6 @@ impl DatValidator {
         Ok(claims)
     }
 
-    pub fn validate_base64(&self, token_b64: &str) -> Result<DatClaims> {
-        let token = String::from_utf8(
-            base64::decode(token_b64).context("Failed to decode base64 DAT token")?,
-        )
-        .context("DAT token is not valid UTF-8")?;
-
-        self.validate(&token)
-    }
 }
 
 #[cfg(test)]
