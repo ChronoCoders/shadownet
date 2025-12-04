@@ -69,8 +69,9 @@ impl Config {
 }
 
 fn generate_private_key() -> String {
-    use x25519_dalek::StaticSecret;
+    use base64::{engine::general_purpose, Engine as _};
     use rand::rngs::OsRng;
+    use x25519_dalek::StaticSecret;
     let secret = StaticSecret::random_from_rng(OsRng);
-    base64::encode(secret.to_bytes())
+    general_purpose::STANDARD.encode(secret.to_bytes())
 }

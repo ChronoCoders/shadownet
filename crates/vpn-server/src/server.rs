@@ -3,6 +3,7 @@ use crate::validator::DatValidator;
 use aes_gcm::aead::{Aead, KeyInit};
 use aes_gcm::{Aes256Gcm, Key, Nonce};
 use anyhow::{bail, Context, Result};
+use base64::{engine::general_purpose, Engine as _};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::net::SocketAddr;
@@ -32,15 +33,15 @@ struct Packet {
 }
 
 struct PeerState {
-    shared_secret: [u8; 32],
+    _shared_secret: [u8; 32],
     cipher: Aes256Gcm,
     last_activity: Instant,
     validated: bool,
-    client_public_key: PublicKey,
+    _client_public_key: PublicKey,
 }
 
 pub struct VpnServer {
-    config: Arc<Config>,
+    _config: Arc<Config>,
     validator: Arc<DatValidator>,
     peers: Arc<RwLock<HashMap<SocketAddr, PeerState>>>,
     socket: Arc<UdpSocket>,
@@ -70,12 +71,12 @@ impl VpnServer {
         let server_public_key = PublicKey::from(&server_private_key);
 
         tracing::info!(
-            public_key = %base64::encode(server_public_key.as_bytes()),
+            public_key = %general_purpose::STANDARD.encode(server_public_key.as_bytes()),
             "Server public key"
         );
 
         Ok(Self {
-            config: Arc::new(config),
+            _config: Arc::new(config),
             validator,
             peers: Arc::new(RwLock::new(HashMap::new())),
             socket: Arc::new(socket),
@@ -170,11 +171,11 @@ impl VpnServer {
         peers.insert(
             peer_addr,
             PeerState {
-                shared_secret: *shared_secret.as_bytes(),
+                _shared_secret: *shared_secret.as_bytes(),
                 cipher,
                 last_activity: Instant::now(),
                 validated: false,
-                client_public_key,
+                _client_public_key: client_public_key,
             },
         );
 
@@ -293,7 +294,8 @@ impl VpnServer {
     }
 
     fn decode_private_key(key_str: &str) -> Result<StaticSecret> {
-        let key_bytes = base64::decode(key_str)
+        let key_bytes = general_purpose::STANDARD
+            .decode(key_str)
             .context("Failed to decode private key")?;
 
         if key_bytes.len() != 32 {
