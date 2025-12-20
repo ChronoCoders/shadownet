@@ -1,15 +1,16 @@
+# ShadowNet - Anonymous Onion Routing Network
 
-A production-grade anonymous network implementing onion routing with blind signature cryptography for relay payment.
+A production-grade anonymous network implementing onion routing with blind signature cryptography for untraceable relay access. Built with Rust for maximum performance and security.
 
 ## Overview
 
-ShadowNet provides Tor-style anonymous networking with a focus on performance and privacy. Users can access the network anonymously through multi-hop encrypted circuits, with relay operators unable to link payments to network usage.
+ShadowNet provides Tor-style anonymous networking with a focus on performance and privacy. Users can access the network anonymously through multi-hop encrypted circuits, with relay operators unable to link subscriptions to network usage.
 
 ### Key Features
 
 - **Onion Routing**: Multi-layer encryption ensures no single relay knows both source and destination
-- **Anonymous Relay Payment**: Blind signature cryptography enables untraceable relay token purchases
-- **Zero-Knowledge Architecture**: Payment and usage are cryptographically separated
+- **Anonymous Token System**: Blind signature cryptography separates subscription identity from network usage
+- **Zero-Knowledge Architecture**: Subscription and usage are cryptographically separated
 - **High Performance**: Built in Rust with production-ready implementations
 - **Comprehensive Testing**: 14/14 tests passing with full coverage
 
@@ -17,9 +18,9 @@ ShadowNet provides Tor-style anonymous networking with a focus on performance an
 ```
 Client
   |
-  | 1. Purchase relay tokens (blind signature)
+  | 1. Acquire relay tokens (blind signature)
   v
-relay-payment service (Port 3001)
+Relay Token Service (Port 3001)
   
 Client builds 3-hop circuit:
   |
@@ -51,7 +52,7 @@ Plaintext: message            <- Destination receives
 ### Prerequisites
 
 - Rust 1.70+
-- PostgreSQL 14+ (optional for relay payment)
+- PostgreSQL 14+ (optional for relay token service)
 - Git
 
 ### Installation
@@ -69,7 +70,7 @@ cargo test --workspace
 
 ### Running Services
 
-**Relay Payment Service:**
+**Relay Token Service:**
 ```bash
 cd crates/blind-token-service
 cargo run --release
@@ -87,14 +88,14 @@ cargo run --release -- test
 ```
 shadownet/
 ├── crates/
-│   ├── crypto/                 # Core cryptographic primitives
-│   │   ├── blind_signature.rs  # RSA blind signatures
+│   ├── crypto/                # Core cryptographic primitives
+│   │   ├── blind_signature.rs # RSA blind signatures
 │   │   ├── onion.rs           # Onion routing encryption
 │   │   ├── ecdh.rs            # Key exchange
 │   │   └── encryption.rs      # AES-256-GCM
 │   │
-│   ├── blind-token-service/   # Relay payment service
-│   │   └── src/               # Anonymous token purchase
+│   ├── blind-token-service/   # Relay token service
+│   │   └── src/               # Anonymous token acquisition
 │   │
 │   └── client/                # CLI client
 │       └── commands/          # Network access commands
@@ -114,7 +115,7 @@ router.add_layer(&key1);
 router.add_layer(&key2);
 router.add_layer(&key3);
 
-let encrypted = router.wrap(b\"Hello, ShadowNet!\").unwrap();
+let encrypted = router.wrap(b"Hello, ShadowNet!").unwrap();
 
 // Each relay unwraps one layer
 let after_relay1 = router.unwrap_one(&encrypted).unwrap();
@@ -122,9 +123,9 @@ let after_relay2 = router.unwrap_one(&after_relay1).unwrap();
 let plaintext = router.unwrap_one(&after_relay2).unwrap();
 ```
 
-### Anonymous Payment
+### Anonymous Token Acquisition
 ```rust
-// Client blinds token before purchase
+// Client blinds token before acquisition
 let (blinded, r) = blind_client.blind(token);
 
 // Service signs without seeing token
@@ -133,7 +134,7 @@ let blind_sig = service.blind_sign(blinded);
 // Client unblinds to get valid signature
 let signature = blind_client.unblind(blind_sig, r);
 
-// Use token anonymously (service cannot link to purchase)
+// Use token anonymously (service cannot link to subscription)
 relay.connect(token, signature);
 ```
 
@@ -174,7 +175,7 @@ cargo test blind_signature::tests
 
 **Protected Against:**
 - Traffic analysis by single relay
-- Payment-to-usage correlation
+- Subscription-to-usage correlation
 - Database breach (no linkable data stored)
 - Relay collusion (cryptographic separation)
 
@@ -185,9 +186,9 @@ cargo test blind_signature::tests
 
 ### Zero-Knowledge Property
 
-No single component can link payment to network usage:
+No single component can link subscription to network usage:
 
-1. **Relay Payment Service**: Sees subscription, signs blinded token (cannot see unblinded token)
+1. **Relay Token Service**: Sees subscription, signs blinded token (cannot see unblinded token)
 2. **Relay Nodes**: See usage, verify token (cannot link to original subscription)
 3. **Database**: Stores subscriptions and usage separately (no joining possible)
 
@@ -223,7 +224,7 @@ Contributions welcome! Please see CONTRIBUTING.md for guidelines.
 - Core cryptographic primitives
 - Onion routing encryption
 - Blind signature protocol
-- Relay payment service
+- Relay token service
 - CLI client
 - Comprehensive test suite
 
