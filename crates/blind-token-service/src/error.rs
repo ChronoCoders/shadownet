@@ -5,28 +5,21 @@ use axum::{
 };
 use serde_json::json;
 use thiserror::Error;
-
 #[derive(Error, Debug)]
 pub enum AppError {
     #[error("Database error: {0}")]
     Database(#[from] sqlx::Error),
-
     #[error("Crypto error: {0}")]
-    Crypto(#[from] zkdip_crypto::CryptoError),
-
+    Crypto(#[from] shadownet_crypto::CryptoError),
     #[error("Subscription already redeemed")]
     AlreadyRedeemed,
-
     #[error("Invalid subscription")]
     InvalidSubscription,
-
     #[error("Configuration error: {0}")]
     Config(String),
-
     #[error("Internal server error: {0}")]
     Internal(String),
 }
-
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         let (status, error_message) = match self {
@@ -49,12 +42,10 @@ impl IntoResponse for AppError {
                 (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error")
             }
         };
-
         let body = Json(json!({
             "error": error_message,
             "details": self.to_string(),
         }));
-
         (status, body).into_response()
     }
 }

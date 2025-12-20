@@ -2,10 +2,7 @@
 members = [
     "crates/crypto",
     "crates/blind-token-service",
-    "crates/dip-service",
-    "crates/enclave-sim",
-    "crates/vpn-server",
-    "crates/client", 
+    "crates/client",
 ]
 resolver = "2"
 

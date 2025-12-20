@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-zkdip-crypto = { path = "../crypto" }
+shadownet-crypto = { path = "../crypto" }
 tokio = { version = "1", features = ["full"] }
 axum = { version = "0.7", features = ["macros"] }
 tower = "0.4"

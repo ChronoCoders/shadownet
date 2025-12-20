@@ -1,9 +1,9 @@
 use crate::config::Config;
 use crate::error::AppError;
+use shadownet_crypto::blind_signature::BlindSigner;
+use shadownet_crypto::jwt::JwtSigner;
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::sync::Arc;
-use zkdip_crypto::blind_signature::BlindSigner;
-use zkdip_crypto::jwt::JwtSigner;
 
 #[derive(Clone)]
 pub struct AppState {
