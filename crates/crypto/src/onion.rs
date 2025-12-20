@@ -10,6 +10,13 @@ pub struct OnionRouter {
     layers: Vec<AesGcmEncryption>,
 }
 
+
+impl Default for OnionRouter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl OnionRouter {
     /// Creates a new onion router with no encryption layers.
     pub fn new() -> Self {
@@ -40,7 +47,7 @@ impl OnionRouter {
     pub fn unwrap_one(&self, data: &[u8]) -> Result<Vec<u8>> {
         if self.layers.is_empty() {
             return Err(crate::error::CryptoError::EncryptionError(
-                "No layers to unwrap".into()
+                "No layers to unwrap".into(),
             ));
         }
 
@@ -53,7 +60,6 @@ impl OnionRouter {
         self.layers.len()
     }
 }
-
 
 #[cfg(test)]
 mod tests {
