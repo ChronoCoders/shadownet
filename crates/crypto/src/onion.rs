@@ -10,7 +10,6 @@ pub struct OnionRouter {
     layers: Vec<AesGcmEncryption>,
 }
 
-
 impl Default for OnionRouter {
     fn default() -> Self {
         Self::new()
