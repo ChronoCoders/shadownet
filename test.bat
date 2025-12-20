@@ -4,21 +4,31 @@ color 0E
 cls
 echo.
 echo  ========================================================
-echo   ZKDIP System Test
+echo   ShadowNet System Test
 echo  ========================================================
 echo.
 
-echo  Running full system test...
+echo  Running crypto library tests...
 echo.
-cargo run -p zkdip-client -- test
+cd crates\crypto
+cargo test --release
 
 echo.
 echo  ========================================================
-echo   Running VPN connection test...
+echo   Running client test...
 echo  ========================================================
 echo.
-cargo run --bin test-client -- --server 127.0.0.1:51820 --ip 192.168.1.100 --jwt-secret dev_secret_key_change_in_production
+cd ..\..
+cd crates\client
+cargo run --release -- test
 
+echo.
+echo  ========================================================
+echo   Test Results Summary
+echo  ========================================================
+echo.
+echo   Crypto tests: Check output above
+echo   Client test: Check output above
 echo.
 echo  ========================================================
 echo   Tests complete
