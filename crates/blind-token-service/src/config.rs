@@ -10,7 +10,7 @@ pub struct Config {
 impl Config {
     pub fn from_env() -> Result<Self, AppError> {
         let database_url = std::env::var("DATABASE_URL")
-            .unwrap_or_else(|_| "postgres://postgres:postgres@localhost/zkdip".to_string());
+            .unwrap_or_else(|_| "postgres://postgres:postgres@localhost/shadownet".to_string());
 
         let jwt_secret = std::env::var("JWT_SECRET")
             .unwrap_or_else(|_| "dev_secret_key_change_in_production".to_string());
